@@ -90,7 +90,7 @@
 	if(__tmod->tcase.result == lTestResult_Fail) break;
 
 #define L_TEST_ASSERT(val) \
-	__L_TEST_BASE_ASSERT_ARGS(val, "\r\n\tAssertion failed.")
+	__L_TEST_BASE_ASSERT_ARGS((val), "\r\n\tAssertion failed.")
 
 #define L_TEST_ASSERTN(val)	\
 	L_TEST_ASSERT(!(val))
