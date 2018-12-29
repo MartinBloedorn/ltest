@@ -100,7 +100,9 @@
 			"\r\n\tAssertion failed. Expected " #ref "; got %d.", val);
 
 #define L_TEST_ASSERTEQ_FLT(val, ref) \
-	__L_TEST_BASE_ASSERT_ARGS((fabs(val - ref)/ref < 0.001), \
+	/* Use relative percent difference */\
+	__L_TEST_BASE_ASSERT_ARGS(((2.0*(fabs(val - ref)/(fabs(ref) + fabs(val))))\
+			< 0.001), \
 			"\r\n\tAssertion failed. " \
 			"Expected " #ref "; got %d.%03d (>.1%% error)", \
 			((int)val), (((int)(1000.0*val))%1000));
