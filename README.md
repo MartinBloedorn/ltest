@@ -13,7 +13,7 @@ I've essentially implemeneted a very stripped down version of it, both as an exe
 
 ## Setup
 
-Include `l_test.h` and `l_test.c` to your project. 
+Add `l_test.h` and `l_test.c` to your project. 
 In `l_test.h`, supply a `printf` compliant function, as well as a fuction to measure system uptime in millseconds (i.e., an Arduino-like `millis()`):
 
 ```c
@@ -26,7 +26,7 @@ In `l_test.h`, supply a `printf` compliant function, as well as a fuction to mea
     
 ## Defining tests
 
-Test cases are grouped in modules, which kinf of follows the syntax format in [Snow](https://github.com/mortie/snow),
+Test cases are grouped in modules, which kind of follows the syntax format in [Snow](https://github.com/mortie/snow).
 Define a module, and within it, appropriate test cases. For example:
 
 ```c
@@ -93,7 +93,7 @@ Executes a `memcmp` between the two supplied buffers. If the assertion fails, an
 In its current form, this library does require a `printf` compliant call. Support for floating point prints is not assumed. 
 
 Also, the library makes use of two GCC extensions, `__attribute__((unused))` and `__attribute__((constructor))`, 
-so ensure that these are available on your system. 
+so make sure that these are available on your system. 
 
 Lastly, the constructor calls link the test modules in a queue for execution, which means that, AFAIK, 
 you can't fully define the order in which modules will be run. 
