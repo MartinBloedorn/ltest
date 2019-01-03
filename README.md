@@ -61,6 +61,14 @@ Define a test module, with a name and a string description. Test cases should be
 
 Define a test case with a description. Test cases can only be defined withen a L_TEST_MODULE body. 
 
+#### DISABLED_L_TEST_MODULE(mname, mdesc)
+
+Quick shorthand to disable a particular test module. Module's contents will be compiled, but not executed.
+
+#### DISABLED_L_TEST_CASE(mname, mdesc)
+
+Quick shorthand to disable a particular test case. Case's contents will be compiled, but not executed.
+
 #### L_TEST_ASSERT(val)
 
 Asserts that the value is non-zero. If the assertion fails, an error message is printed and the test case is aborted.
