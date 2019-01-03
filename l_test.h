@@ -33,6 +33,8 @@
 /// Enable/disable all tests by commenting this symbol
 /// #define L_UNIT_TESTS
 
+// Formatting tips:
+// http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
 #define __L_COLOR_BOLD 		"\033[1m"
 #define __L_COLOR_RESET 	"\033[0m"
 #define __L_COLOR_SUCCESS 	"\033[32m"
@@ -69,6 +71,10 @@
 	__tmod->tcase.name 		= cname; \
 	for(__ltest_case_begin(__tmod); __ltest_case_end(__tmod);)
 
+/// To simplify disabling a test case
+#define DISABLED_L_TEST_CASE(cname) \
+	for(;false;)
+
 /// Prints a simple formatted, customizable error message
 #define __L_TEST_PRINT_FAIL_ARGS(lnum, fname, ...) \
 	__L_PRINTF(__L_COLOR_FAIL "[ERROR] In %s:%lu", fname, lnum); \
@@ -97,25 +103,27 @@
 
 #define L_TEST_ASSERTEQ_INT(val, ref) \
 	__L_TEST_BASE_ASSERT_ARGS((val == ref), \
-			"\r\n\tAssertion failed. Expected " #ref "; got %d.", val);
+			"\r\n\tAssertion failed. Expected %ld; got %ld.", \
+			(int32_t)ref, (int32_t)(val))
 
 #define L_TEST_ASSERTEQ_FLT(val, ref) \
 	/* Use relative percent difference */\
 	__L_TEST_BASE_ASSERT_ARGS(((2.0*(fabs(val - ref)/(fabs(ref) + fabs(val))))\
 			< 0.001), \
 			"\r\n\tAssertion failed. " \
-			"Expected " #ref "; got %d.%03d (>.1%% error)", \
-			((int)val), (((int)(1000.0*val))%1000));
+			"Expected %d.%03d; got %d.%03d (>.1%% error)", \
+			((int)ref), (((int)(1000.0*ref))%1000), \
+			((int)val), (((int)(1000.0*val))%1000))
 
 #define L_TEST_ASSERTEQ_BUF(val, ref, size) \
 	__L_TEST_BASE_ASSERT_ARGS(!memcmp(val, ref, size), \
-			"\r\n\tAssertion failed. Buffer mismatch.");
+			"\r\n\tAssertion failed. Buffer mismatch.")
 
 #define L_TEST_ASSERTEQ_STR(val, ref) \
 	__L_TEST_BASE_ASSERT_ARGS(!strcmp(val, ref), \
 			"\r\n\tAssertion failed. String mismatch." \
 			"\r\n\tExpected: %s" \
-			"\r\n\t     Got: %s", ref, val);
+			"\r\n\t     Got: %s", ref, val)
 
 /******** ENUMS & STRUCTS ****************************************************/
 

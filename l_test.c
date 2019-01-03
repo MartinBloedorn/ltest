@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file    l_test.h
+ * @file    l_test.c
  * @author  Martin Vincent Bloedorn
  * @date    28-December-18
  * @brief   Functionality for unit testing.
@@ -45,8 +45,9 @@ DISABLED_L_TEST_MODULE(self_test, \
 	}
 
 	L_TEST_CASE("L_TEST_ASSERTEQ_INT") {
-		int val = 13;
-		L_TEST_ASSERTEQ_INT(val, 46);
+		int val_a = 13;
+		int val_b = 46;
+		L_TEST_ASSERTEQ_INT(val_a, val_b);
 	}
 
 	L_TEST_CASE("L_TEST_ASSERTEQ_FLT") {
