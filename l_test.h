@@ -20,7 +20,8 @@
 #include <math.h>
 #include <string.h>
 
-#include "l_utils.h"
+#include "l_utils.h" 	/// Used to supply millis() and print(); substitute
+						/// according to your needs.
 
 /******** DEFINES ************************************************************/
 
@@ -102,18 +103,21 @@
 	L_TEST_ASSERT(!(val))
 
 #define L_TEST_ASSERTEQ_INT(val, ref) \
-	__L_TEST_BASE_ASSERT_ARGS((val == ref), \
+	__L_TEST_BASE_ASSERT_ARGS((((int32_t)val) == ((int32_t)ref)), \
 			"\r\n\tAssertion failed. Expected %ld; got %ld.", \
-			(int32_t)ref, (int32_t)(val))
+			(int32_t)ref, (int32_t)val)
 
 #define L_TEST_ASSERTEQ_FLT(val, ref) \
 	/* Use relative percent difference */\
-	__L_TEST_BASE_ASSERT_ARGS(((2.0*(fabs(val - ref)/(fabs(ref) + fabs(val))))\
+	__L_TEST_BASE_ASSERT_ARGS(((2.0*(fabs(((float)val) - ((float)ref))\
+			/(fabs(ref) + fabs(val))))\
 			< 0.001), \
 			"\r\n\tAssertion failed. " \
-			"Expected %d.%03d; got %d.%03d (>.1%% error)", \
-			((int)ref), (((int)(1000.0*ref))%1000), \
-			((int)val), (((int)(1000.0*val))%1000))
+			"Expected %s%d.%03d; got %s%d.%03d (>.1%% error)", \
+			((ref) < 0.0? "-" : ""),\
+			((int)ref), (((int)(1000.0*fabs(ref)))%1000), \
+			((val) < 0.0? "-" : ""),\
+			((int)val), (((int)(1000.0*fabs(val)))%1000))
 
 #define L_TEST_ASSERTEQ_BUF(val, ref, size) \
 	__L_TEST_BASE_ASSERT_ARGS(!memcmp(val, ref, size), \
