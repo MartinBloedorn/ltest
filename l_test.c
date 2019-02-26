@@ -34,6 +34,9 @@ static void _exec_module(lTestModule * mod) {
 }
 #endif
 
+/// \brief Tolerance for L_TEST_ASSERTEQ_FLT tests (default: 0.1%)
+float __ltest_flt_tol = 0.001;
+
 /******** PUBLIC *************************************************************/
 
 DISABLED_L_TEST_MODULE(self_test, \

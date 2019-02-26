@@ -31,17 +31,32 @@
 // Supply a function to return a wall time (in ms)
 #define __L_MILLIS				millis
 
+// Disable colored output if running on a terminal that doesn't support it
+#define __L_COLOR_ENABLE 		0
+
 /// Enable/disable all tests by commenting this symbol
 /// #define L_UNIT_TESTS
 
 // Formatting tips:
 // http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
+#if __L_COLOR_ENABLE == 1
 #define __L_COLOR_BOLD 		"\033[1m"
 #define __L_COLOR_RESET 	"\033[0m"
 #define __L_COLOR_SUCCESS 	"\033[32m"
 #define __L_COLOR_FAIL 		"\033[31m"
 #define __L_COLOR_MAYBE 	"\033[35m"
 #define __L_COLOR_DESC 		__L_COLOR_BOLD "\033[33m"
+#else
+#define __L_COLOR_BOLD
+#define __L_COLOR_RESET
+#define __L_COLOR_SUCCESS
+#define __L_COLOR_FAIL
+#define __L_COLOR_MAYBE
+#define __L_COLOR_DESC
+#endif
+
+/// Set the tolerance for L_TEST_ASSERTEQ_FLT
+extern float __ltest_flt_tol;
 
 /// Declares a test module block. Cases are added via the L_TEST_CASE macro.
 #if defined(L_UNIT_TESTS)
@@ -83,8 +98,10 @@
 	__L_PRINTF("\r\n"__L_COLOR_RESET);
 
 /// Asserts that val != 0; updates the information on the ongoing test case.
-#define __L_TEST_BASE_ASSERT_ARGS(val, ...) \
-	do { uint32_t lineno= __LINE__; \
+#define __L_TEST_BASE_ASSERT_ARGS(val, ...)  \
+	/* Insufficient workaround for bug LT001 */\
+	if(__tmod->tcase.result != lTestResult_Fail) { \
+		uint32_t lineno= __LINE__; \
 		const char * fn = __FILE__; \
 		(void)lineno; (void)fn; \
 		 if(!val) { \
@@ -92,9 +109,9 @@
 			__ltest_case_end(__tmod); \
 			__L_TEST_PRINT_FAIL_ARGS(lineno, fn, __VA_ARGS__); \
 		 }\
-	} while(0); \
-	/* If assert failed, break out of for loop  */\
-	if(__tmod->tcase.result == lTestResult_Fail) break;
+		/* If assert failed, break out of for loop  */\
+		if(__tmod->tcase.result == lTestResult_Fail) break; \
+	}
 
 #define L_TEST_ASSERT(val) \
 	__L_TEST_BASE_ASSERT_ARGS((val), "\r\n\tAssertion failed.")
@@ -111,13 +128,13 @@
 	/* Use relative percent difference */\
 	__L_TEST_BASE_ASSERT_ARGS(((2.0*(fabs(((float)val) - ((float)ref))\
 			/(fabs(ref) + fabs(val))))\
-			< 0.001), \
+			<= __ltest_flt_tol), \
 			"\r\n\tAssertion failed. " \
-			"Expected %s%d.%03d; got %s%d.%03d (>.1%% error)", \
+			"Expected %s%d.%03d; got %s%d.%03d (error > FLTTOL)", \
 			((ref) < 0.0? "-" : ""),\
-			((int)ref), (((int)(1000.0*fabs(ref)))%1000), \
+			(abs((int)ref)), (((int)(1000.0*fabs(ref)))%1000), \
 			((val) < 0.0? "-" : ""),\
-			((int)val), (((int)(1000.0*fabs(val)))%1000))
+			(abs((int)ref)), (((int)(1000.0*fabs(val)))%1000))
 
 #define L_TEST_ASSERTEQ_BUF(val, ref, size) \
 	__L_TEST_BASE_ASSERT_ARGS(!memcmp(val, ref, size), \
@@ -128,6 +145,14 @@
 			"\r\n\tAssertion failed. String mismatch." \
 			"\r\n\tExpected: %s" \
 			"\r\n\t     Got: %s", ref, val)
+
+/// Set L_TEST_ASSERTEQ_FLT tolerance
+#define L_TEST_SET_FLTTOL(val) \
+	__ltest_flt_tol = (fabs(val));
+
+/// Reset L_TEST_ASSERTEQ_FLT tolerance to its default
+#define L_TEST_RESET_FLTTOL \
+	__ltest_flt_tol = 0.001;
 
 /******** ENUMS & STRUCTS ****************************************************/
 
