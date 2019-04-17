@@ -20,22 +20,22 @@
 #include <math.h>
 #include <string.h>
 
-#include "l_utils.h" 	/// Used to supply millis() and print(); substitute
-						/// according to your needs.
+#include "l_utils.h" 	///< Used to supply millis() and print(); substitute
+						///< according to your needs.
 
 /******** DEFINES ************************************************************/
 
 /// Supply your printf compliant function
 #define __L_PRINTF(...)			printf(__VA_ARGS__)
 
-// Supply a function to return a wall time (in ms)
+/// Supply a function to return a wall time (in ms)
 #define __L_MILLIS				millis
 
 // Disable colored output if running on a terminal that doesn't support it
 #define __L_COLOR_ENABLE 		0
 
 /// Enable/disable all tests by commenting this symbol
-/// #define L_UNIT_TESTS
+//  #define L_UNIT_TESTS
 
 // Formatting tips:
 // http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
@@ -119,32 +119,35 @@ extern float __ltest_flt_tol;
 #define L_TEST_ASSERTN(val)	\
 	L_TEST_ASSERT(!(val))
 
-#define L_TEST_ASSERTEQ_INT(val, ref) \
-	__L_TEST_BASE_ASSERT_ARGS((((int32_t)val) == ((int32_t)ref)), \
+#define L_TEST_ASSERTEQ_INT(val, ref) { \
+	int32_t __v = val; int32_t __r = ref; \
+	__L_TEST_BASE_ASSERT_ARGS((((int32_t)__v) == ((int32_t)__r)), \
 			"\r\n\tAssertion failed. Expected %ld; got %ld.", \
-			(int32_t)ref, (int32_t)val)
+			(int32_t)__r, (int32_t)__v) }
 
-#define L_TEST_ASSERTEQ_FLT(val, ref) \
+#define L_TEST_ASSERTEQ_FLT(val, ref) {\
+	float __v = (val); float __r = (ref); \
 	/* Use relative percent difference */\
-	__L_TEST_BASE_ASSERT_ARGS(((2.0*(fabs(((float)val) - ((float)ref))\
-			/(fabs(ref) + fabs(val))))\
+	__L_TEST_BASE_ASSERT_ARGS(((2.0*(fabs(((float)__v) - ((float)__r))\
+			/(fabs(__r) + fabs(__v))))\
 			<= __ltest_flt_tol), \
 			"\r\n\tAssertion failed. " \
 			"Expected %s%d.%03d; got %s%d.%03d (error > FLTTOL)", \
 			((ref) < 0.0? "-" : ""),\
-			(abs((int)ref)), (((int)(1000.0*fabs(ref)))%1000), \
+			(abs((int)__r)), (((int)(1000.0*fabs(__r)))%1000), \
 			((val) < 0.0? "-" : ""),\
-			(abs((int)ref)), (((int)(1000.0*fabs(val)))%1000))
+			(abs((int)__v)), (((int)(1000.0*fabs(__v)))%1000)) }
 
 #define L_TEST_ASSERTEQ_BUF(val, ref, size) \
 	__L_TEST_BASE_ASSERT_ARGS(!memcmp(val, ref, size), \
 			"\r\n\tAssertion failed. Buffer mismatch.")
 
-#define L_TEST_ASSERTEQ_STR(val, ref) \
-	__L_TEST_BASE_ASSERT_ARGS(!strcmp(val, ref), \
+#define L_TEST_ASSERTEQ_STR(val, ref) { \
+	const char* __v = val; const char * __r = ref; \
+	__L_TEST_BASE_ASSERT_ARGS(!strcmp(__v, __r), \
 			"\r\n\tAssertion failed. String mismatch." \
 			"\r\n\tExpected: %s" \
-			"\r\n\t     Got: %s", ref, val)
+			"\r\n\t     Got: %s", __r, __v) }
 
 /// Set L_TEST_ASSERTEQ_FLT tolerance
 #define L_TEST_SET_FLTTOL(val) \
